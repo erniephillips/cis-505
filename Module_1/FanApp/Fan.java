@@ -7,7 +7,7 @@ public class Fan {
     //declare all variables
     //set as static so all like objects can access the fan's speeds
     /*****(better set as a strongly-typed object) or for memory purposes as bitmasks */
-    public static final int STOPPED = 0, SLOW = 1, MEDIUM = 2, FAST = 3; //set constants for fan speed 
+    public static final int STOPPED = 0, SLOW = 1, MEDIUM = 2, FAST = 3; //set constants for fan speed (const ensures vars cannot change)
     private int speed = STOPPED; //set current speed to stopped
     private boolean isOn = false; //var for check of fan status
     private double radius = 6; //var for fan size
