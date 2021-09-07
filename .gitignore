@@ -8,7 +8,7 @@
 
 ##General files
 *.class
-*.jar
+#*.jar
 *.war
 *.log
 /target/
