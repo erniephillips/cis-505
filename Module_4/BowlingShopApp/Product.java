@@ -49,11 +49,10 @@ public class Product {
 
   @Override
   public String toString() {
-    return "{" +
-      " code='" + getCode() + "'\n" +
-      ", description='" + getDescription() + "'\n" +
-      ", price='" + getPrice() + "'" +
-      "}";
+    return 
+      "Product Code:  " + getCode() + "\n" +
+      "Description:  " + getDescription() + "\n" +
+      "Price:  $%,6.2f\n";
   }
   
 }
