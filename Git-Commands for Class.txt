@@ -1,0 +1,16 @@
+-Author: Ernie Phillips
+-Date: 09/15/2021
+
+git branch MyBranchName 	- New branch  
+git checkout MyBranchName	- Check out branch
+
+--make your file edits--
+--commit and push changes and new local branch to remote--
+
+git add . 			- Add all changes
+git commit -m "my message"	- Commit changes with message 
+git push -u origin MyBranchName - Push new branch and changes to remote
+
+--Merge new branch with main--
+git checkout main		- Checkout main branch as the active one so we can merge our current branch
+git merge MyBranchName		- Git merge, merges the specified branch into the currently active branch
