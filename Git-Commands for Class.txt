@@ -15,4 +15,4 @@ git push -u origin MyBranchName - Push new branch and changes to remote
 git checkout main		- Checkout main branch as the active one so we can merge our current branch
 git merge MyBranchName		- Git merge, merges the specified branch into the currently active branch
 git push			- Push to main
-test
+another test
