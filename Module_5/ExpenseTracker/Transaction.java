@@ -1,4 +1,3 @@
-package ExpenseTracker;
 /*
     Author: Ernest Phillips III
     Date: 09/20/2021
@@ -48,9 +47,9 @@ public class Transaction{ //declare vars
   @Override
   public String toString() {
     return
-      "Date:  " + getDate() + "\n" +
+      "\nDate:  " + getDate() + "\n" +
       "Description:  " + getDescription() + "\n" +
-      "Amount:  " + getAmount() + "\n";
+      "Amount:  $%,6.2f\n";
   }
 
 }

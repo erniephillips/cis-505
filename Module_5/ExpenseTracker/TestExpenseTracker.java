@@ -1,5 +1,8 @@
-package ExpenseTracker;
-
+/*
+    Author: Ernest Phillips III
+    Date: 09/21/2021
+    Purpose: Main class for application execution
+*/
 import java.io.IOException;
 
 import java.text.SimpleDateFormat;
@@ -18,8 +21,9 @@ public class TestExpenseTracker {
 
       if (input == 1) {// View Transactions
         ArrayList<Transaction> transactions = TransactionIO.findAll(); // find all transactions stored in txt file
+        System.out.println("MONTHLY EXPENSES");
         for (Transaction tran : transactions) { // iterate through each transaction
-          System.out.print(tran.toString()); // output the overridden toString method of the Transaction class
+          System.out.printf(tran.toString(), tran.getAmount()); // output the overridden toString method of the Transaction class
         }
       } else if (input == 2) { // Add Transactions
         String addAnotherTransaction = "y"; // set user prompt for iterating over adding actions
@@ -38,12 +42,11 @@ public class TestExpenseTracker {
 
           // prompt user again
           addAnotherTransaction = ValidatorIO.getString(scanner, "\n  Add another transaction (y/n): ");
-
-          try {
-            TransactionIO.bulkInsert(transactions);
-          } catch (IOException ex) {
-            System.out.println("\n  Exception: " + ex.getMessage());
-          }
+        }
+        try {// once user is finished with adding transactions, input to file
+          TransactionIO.bulkInsert(transactions);
+        } catch (IOException ex) {
+          System.out.println("\n  Exception: " + ex.getMessage());
         }
       } else if (input == 3) {// View Expense
         double totalAmount = 0;
@@ -51,14 +54,16 @@ public class TestExpenseTracker {
         for (Transaction tran : transactions) { // iterate through each transaction
           totalAmount += tran.getAmount(); // output the overridden toString method of the Transaction class
         }
-        System.out.println("Your total monthly expense is " + totalAmount);
+        System.out.printf("\nYour total monthly expense is $%,6.2f\n", totalAmount);
       }
+
+      continueProgram = ValidatorIO.getString(scanner, "\nContinue (y/n):  ");
     }
     scanner.close();
   }
 
   public static String displayMenu() {
-    return "MENU OPTIONS\n" + "\t1.  View Transactions" + "\t2. Add Transactions" + "\t3. View Expense\n\n"
+    return "MENU OPTIONS\n" + "\t1.  View Transactions" + "\n\t2.  Add Transactions" + "\n\t3.  View Expense\n\n"
         + "Please choose an option:  ";
   }
 }

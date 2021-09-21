@@ -1,4 +1,3 @@
-package ExpenseTracker;
 /*
     Author: Ernest Phillips III
     Date: 09/20/2021

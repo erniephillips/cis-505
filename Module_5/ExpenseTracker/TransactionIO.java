@@ -1,4 +1,3 @@
-package ExpenseTracker;
 /*
     Author: Ernest Phillips III
     Date: 09/20/2021
@@ -10,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class TransactionIO {
@@ -43,12 +41,9 @@ public class TransactionIO {
     ArrayList<Transaction> transactions = null;
     if(file.exists()){
       Scanner input = new Scanner(new File(FILE_NAME));
+      transactions = new ArrayList<Transaction>();
       while (input.hasNext()){
-        transactions = new ArrayList<Transaction>(
-         Arrays.asList(
-          new Transaction(){{setDate(input.next()); setDescription(input.next()); setAmount(Double.parseDouble(input.nextLine()));}}
-         )
-        );
+        transactions.add(new Transaction(){{setDescription(input.next()); setDate(input.next()); setAmount(Double.parseDouble(input.nextLine()));}});
       }
     }else{
       return new ArrayList<>();
