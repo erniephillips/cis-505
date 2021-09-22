@@ -1,0 +1,4 @@
+#Run
+javac *.java                                  --creates compiled class files
+jar cvfe YourJar.jar YourMainClass *.class    --create a jar file with all classes, point to your main class
+java -jar YourJar.jar                         --to run jar executable. (Doesn't currently open if double click in windows)

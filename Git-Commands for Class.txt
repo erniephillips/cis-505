@@ -16,3 +16,9 @@ git checkout main		- Checkout main branch as the active one so we can merge our 
 git merge --no-ff MyBranchName	- Git merge, merges the specified branch into the currently active branch (--no-ff) makes it so the fast forward merge is visible in the commit history
 git push			- Push to main
 git log --graph			- View commits by branches and merges
+
+
+--To pull from another machine
+git branch --set-upstream-to=origin/Module_5
+
+**Don't forget to set back to main after finished
