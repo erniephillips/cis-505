@@ -41,7 +41,7 @@ public class TestComposerApp {
   }
 
   public static String displayMenu() {
-    return "\nMENU OPTIONS" + "\t1.  View Composers\n" + "\t2.  Find Composer\n" + "\t3.  Add Composer\n"
-        + "\t4.  Exit\n" + "\n.  Please choose an option:  \n";
+    return "\nMENU OPTIONS\n" + "\t1.  View Composers\n" + "\t2.  Find Composer\n" + "\t3.  Add Composer\n"
+        + "\t4.  Exit\n" + "\nPlease choose an option:  ";
   }
 }
