@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,9 +21,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -29,7 +34,7 @@ import javafx.stage.Stage;
 public class PhillipsGradeBookApp extends Application {
   // set variables for the GUI box (scene) size
   final double initialSceneWidth = 520;
-  final double initialSceneHeight = 470;
+  final double initialSceneHeight = 700;
 
   // declare all needed variables
   // Alert box for save
@@ -57,6 +62,9 @@ public class PhillipsGradeBookApp extends Application {
   private Button btnClear = new Button("Clear");
   private Button btnView = new Button("View Grades");
   private Button btnSave = new Button("Save Entry");
+
+  // testing table view
+  private TableView table = new TableView();
 
   // gridpane to include all above controls in a concise layout
   GridPane gridPane = new GridPane();
@@ -140,10 +148,30 @@ public class PhillipsGradeBookApp extends Application {
       try { // retrieve list of student records and output to text area
         List<Student> students = RecordsIO.DisplayRecords();
         String records = "";
+
         if (students != null) {
+          // set the column headers
+          TableColumn firstNameCol = new TableColumn("First Name");
+          TableColumn lastNameCol = new TableColumn("Last Name");
+          TableColumn courseCol = new TableColumn("Course");
+          TableColumn gradeCol = new TableColumn("Grade");
+
+          // set the student object property mappings for observable list
+          firstNameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+          lastNameCol.setCellValueFactory(new PropertyValueFactory("lastName"));
+          courseCol.setCellValueFactory(new PropertyValueFactory("course"));
+          gradeCol.setCellValueFactory(new PropertyValueFactory("grade"));
+
+          // create an observable list from the array list
+          ObservableList<Student> listStudents = FXCollections.observableArrayList(students);
+          table.setItems(listStudents); // set the item population from list
+
+          table.getColumns().addAll(firstNameCol, lastNameCol, courseCol, gradeCol); // add the columns
           for (Student student : students) {
             records += student.toString() + "\n"; // append string of results
           }
+
+          gridPane.add(table, 1, 8, 2, 1);
           txtResults.setText(records); // set the textbox
         }
       } catch (IOException e1) {
