@@ -39,6 +39,25 @@ public class RecordsIO {
     output.close(); // close the FileWriter to save on memory
   }
 
+  public static void BulkInsertRewrite(ArrayList<Student> students) throws IOException {
+    PrintWriter output = null; // create new object that will write to file
+    StringBuffer csvHeader = new StringBuffer(""); // output to the header
+    StringBuffer csvData = new StringBuffer(""); // output to the body
+
+    output = new PrintWriter(new FileOutputStream(new File(FILE_NAME), false)); // set to false so file is overwritten
+
+    csvHeader.append("First Name,Last Name,Course,Grade"); // write the header
+    output.write(csvHeader.toString());
+    for (Student student : students) {
+      // write the body
+      output.append("\n" + student.getFirstName() + "," + student.getLastName() + "," + student.getCourse() + ","
+          + student.getGrade());
+    }
+
+    output.write(csvData.toString()); // write to file
+    output.close(); // close the FileWriter to save on memory
+  }
+
   public static ArrayList<Student> DisplayRecords() throws IOException {
     // open file input stream
     BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME));
