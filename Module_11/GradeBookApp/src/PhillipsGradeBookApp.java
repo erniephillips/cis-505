@@ -4,10 +4,8 @@
     Date: 10/06/2021
     Purpose: Main application file that interfaces between user and excel file for adding/retrieving grades
 */
-import java.beans.EventHandler;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Parameter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -46,9 +44,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Box;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 public class PhillipsGradeBookApp extends Application {
   // set variables for the GUI box (scene) size
@@ -100,7 +98,7 @@ public class PhillipsGradeBookApp extends Application {
   private Button btnDownload = new Button("Download CSV");
 
   // testing table view
-  private TableView table = new TableView();
+  private TableView<Student> table = new TableView<Student>();
 
   // gridpane to include all above controls in a concise layout
   GridPane gridPane = new GridPane();
@@ -143,43 +141,55 @@ public class PhillipsGradeBookApp extends Application {
     // add controls to gridpane when adding to the gridpane.add
     // (Node, columnIndex, rowIndex, colspan, rowspan);
 
+    
+    HBox viewBtnContainer = new HBox(); // used to lay out children in a single horizontal row
+    viewBtnContainer.setAlignment(Pos.BASELINE_RIGHT);
+    viewBtnContainer.setPadding(new Insets(15, 0, 15, 30)); // set the padding
+    viewBtnContainer.setSpacing(10); // set the spacing between controls
+    viewBtnContainer.getChildren().add(btnView); // add the view grades button
+    viewBtnContainer.getChildren().add(btnDownload); // add the download CSV button
+
+    gridPane.add(viewBtnContainer, 2, 1, 2, 1); // add the container to the grid pane
+    GridPane.setHalignment(btnDownload, HPos.RIGHT);
+
     // First Name
-    gridPane.add(lblFirstName, 1, 1); // add first name label with a col and row index
+    gridPane.add(lblFirstName, 1, 2); // add first name label with a col and row index
     txtFirstName.setMaxWidth(350); // set max widths, otherwise very large
-    gridPane.add(lblFirstNameError, 2, 1);
-    gridPane.add(txtFirstName, 3, 1); // add the textbox
+    gridPane.add(lblFirstNameError, 2, 2);
+    gridPane.add(txtFirstName, 3, 2); // add the textbox
     GridPane.setHalignment(txtFirstName, HPos.RIGHT); // set the alignment of the textbox to the right
 
     // Last Name
-    gridPane.add(lblLastName, 1, 2); // same as above comments but for last name
+    gridPane.add(lblLastName, 1, 3); // same as above comments but for last name
     txtLastName.setMaxWidth(350);
-    gridPane.add(lblLastNameError, 2, 2);
-    gridPane.add(txtLastName, 3, 2);
+    gridPane.add(lblLastNameError, 2, 3);
+    gridPane.add(txtLastName, 3, 3);
     GridPane.setHalignment(txtLastName, HPos.RIGHT);
 
     // Course
-    gridPane.add(lblCourse, 1, 3); // same as above comments but for course
+    gridPane.add(lblCourse, 1, 4); // same as above comments but for course
     txtCourse.setMaxWidth(350);
-    gridPane.add(lblCourseError, 2, 3);
-    gridPane.add(txtCourse, 3, 3);
+    gridPane.add(lblCourseError, 2, 4);
+    gridPane.add(txtCourse, 3, 4);
     GridPane.setHalignment(txtCourse, HPos.RIGHT);
 
     // Grade
-    gridPane.add(lblGrade, 1, 4); // add the label for the grades drop down
+    gridPane.add(lblGrade, 1, 5); // add the label for the grades drop down
     // create a default list for drop // down
     List<String> listGrades = new ArrayList<String>(Arrays.asList("A", "B", "C", "D", "F"));
     cbGrades.getItems().addAll(listGrades); // add the list of grades to the dropdown
-    gridPane.add(lblGradeError, 2, 4);
-    gridPane.add(cbGrades, 3, 4); // add drop down to grid
+    gridPane.add(lblGradeError, 2, 5);
+    gridPane.add(cbGrades, 3, 5); // add drop down to grid
     GridPane.setHalignment(cbGrades, HPos.RIGHT);
+
+    
 
     HBox actionBtnContainer = new HBox(); // used to lay out children in a single horizontal row
     actionBtnContainer.setPadding(new Insets(15, 0, 15, 30)); // set the padding
     actionBtnContainer.setSpacing(10); // set the spacing between controls
-    actionBtnContainer.getChildren().add(btnClear); // add the clear button
-    actionBtnContainer.getChildren().add(btnView); // add the view grades button
     actionBtnContainer.getChildren().add(btnSave); // add the save grade entry button
-    actionBtnContainer.getChildren().add(btnDownload); // add the download CSV button
+    actionBtnContainer.getChildren().add(btnClear); // add the clear button
+    
 
     btnClear.setOnAction(e -> { // anonymous Lambda function to clear all fields
       txtFirstName.clear();
@@ -242,7 +252,7 @@ public class PhillipsGradeBookApp extends Application {
         e1.printStackTrace();
       }
     });
-    gridPane.add(actionBtnContainer, 2, 5, 2, 1); // add the container to the grid pane
+    gridPane.add(actionBtnContainer, 2, 6, 2, 1); // add the container to the grid pane
     GridPane.setHalignment(actionBtnContainer, HPos.RIGHT);
 
     tab1.setText("Grading Form");
@@ -269,55 +279,92 @@ public class PhillipsGradeBookApp extends Application {
 
       if (students != null) {
         table.setEditable(true);
-        Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
-          public TableCell call(TableColumn p) {
-            return new EditingCell();
-          }
-        };
-        // set the column headers
-        TableColumn firstNameCol = new TableColumn<Student, String>("First Name");
-        TableColumn lastNameCol = new TableColumn("Last Name");
-        TableColumn courseCol = new TableColumn("Course");
-        TableColumn gradeCol = new TableColumn("Grade");
-        TableColumn<Student, Student> remove = new TableColumn<>("Actions");
-        TableColumn<Student, Student> edit = new TableColumn<>("Actions");
-
+        
         // set the student object property mappings for observable list
-        // firstNameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        // firstNameCol.setOnEditCommit((CellEditEvent<Student, String> t) -> {
-        // ((Student)
-        // t.getTableView().getItems().get(t.getTablePosition().getRow())).setFirstName(t.getNewValue());
-        // });
+        TableColumn<Student, String> firstNameCol = new TableColumn<Student, String>("First Name");   
+        //map the cell value to the student property for the observable stream     
         firstNameCol.setCellValueFactory(new PropertyValueFactory<Student, String>("firstName"));
+        //set the fields as an editable textfield
         firstNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        firstNameCol.setOnEditCommit(new EventHandler<CellEditEvent<Student, String>>() {
-          @Override
-          public void handle(CellEditEvent<Student, String> t) {
-            ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow())).setFirstName(t.getNewValue());
-          }
+        //handle the commit when return key hit
+        firstNameCol.setOnEditCommit((CellEditEvent<Student, String> t) -> {
+          ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow())).setFirstName(t.getNewValue()); 
+          Student student = ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow()));//get the current student info
+          obsListStudents.get(Integer.parseInt(student.getId()) - 1).setFirstName(t.getNewValue());//set the new value by student id
+          ArrayList<Student> listStudents = new ArrayList<Student>(obsListStudents); //update the record in CSV
+              try {
+                RecordsIO.BulkInsertRewrite(listStudents);
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
         });
-        // firstNameCol.setOnEditCommit(new
-        // EventHandler<TableColumn.CellEditEvent<Student, String>>() {
-        // @Override
-        // public void handle(TableColumn.CellEditEvent<SaleItem, Double> event) {
-        // SaleItem saleItem =
-        // event.getTableView().getItems().get(event.getTablePosition().getRow());
-        // saleItem.setQuantity(event.getNewValue());
-        // saleItem.updatePrice();
-        // tv.refresh();
-        // }
-        // }
-        // );
 
-        lastNameCol.setCellValueFactory(new PropertyValueFactory("lastName"));
-        courseCol.setCellValueFactory(new PropertyValueFactory("course"));
-        gradeCol.setCellValueFactory(new PropertyValueFactory("grade"));
+        // set the column headers
+        TableColumn<Student, String> lastNameCol = new TableColumn<Student, String>("Last Name");
+        //map the cell value to the student property for the observable stream     
+        lastNameCol.setCellValueFactory(new PropertyValueFactory<Student, String>("lastName"));
+        //set the fields as an editable textfield
+        lastNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        //handle the commit when return key hit
+        lastNameCol.setOnEditCommit((CellEditEvent<Student, String> t) -> {
+          ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow())).setLastName(t.getNewValue()); 
+          Student student = ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow()));//get the current student info
+          obsListStudents.get(Integer.parseInt(student.getId()) - 1).setLastName(t.getNewValue());//set the new value by student id
+          ArrayList<Student> listStudents = new ArrayList<Student>(obsListStudents); //update the record in CSV
+              try {
+                RecordsIO.BulkInsertRewrite(listStudents);
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+        });
 
+        TableColumn<Student, String> courseCol = new TableColumn<Student, String>("Course");
+        //map the cell value to the student property for the observable stream     
+        courseCol.setCellValueFactory(new PropertyValueFactory<Student, String>("course"));
+        //set the fields as an editable textfield
+        courseCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        //handle the commit when return key hit
+        courseCol.setOnEditCommit((CellEditEvent<Student, String> t) -> {
+          ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow())).setCourse(t.getNewValue()); 
+          Student student = ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow()));//get the current student info
+          obsListStudents.get(Integer.parseInt(student.getId()) - 1).setCourse(t.getNewValue());//set the new value by student id
+          ArrayList<Student> listStudents = new ArrayList<Student>(obsListStudents); //update the record in CSV
+              try {
+                RecordsIO.BulkInsertRewrite(listStudents);
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+        });
+
+        TableColumn<Student, String> gradeCol = new TableColumn<Student, String>("Grade");
+        //map the cell value to the student property for the observable stream     
+        gradeCol.setCellValueFactory(new PropertyValueFactory<Student, String>("grade"));
+        //set the fields as an editable textfield
+        gradeCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        //handle the commit when return key hit
+        gradeCol.setOnEditCommit((CellEditEvent<Student, String> t) -> {
+          ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow())).setGrade(t.getNewValue()); 
+          Student student = ((Student) t.getTableView().getItems().get(t.getTablePosition().getRow()));//get the current student info
+          obsListStudents.get(Integer.parseInt(student.getId()) - 1).setGrade(t.getNewValue());//set the new value by student id
+          ArrayList<Student> listStudents = new ArrayList<Student>(obsListStudents); //update the record in CSV
+              try {
+                RecordsIO.BulkInsertRewrite(listStudents);
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+        });
+        
+        //set the column header for the record removal button
+        TableColumn<Student, Student> remove = new TableColumn<>("Remove Record");
+  
+        
         remove.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        
         remove.setCellFactory(param -> new TableCell<Student, Student>() {
+          //set the button for record removal
           private final Button deleteButton = new Button("X");
 
-          @Override
+          @Override //update the record
           protected void updateItem(Student student, boolean empty) {
             super.updateItem(student, empty);
 
@@ -376,7 +423,11 @@ public class PhillipsGradeBookApp extends Application {
 
         // set tab 2 content
         tab2.setText("Table Results View");
-        tab2.setContent(table);
+        VBox tableTab = new VBox();
+        Label lblInfo = new Label("To edit the table values, double click on any given record. Type desired text, then press enter to change and save.");
+        lblInfo.setWrapText(true);
+        tableTab.getChildren().addAll(lblInfo, table);
+        tab2.setContent(tableTab);
         tabPane.getTabs().add(tab2);
 
         // set tab 3 content

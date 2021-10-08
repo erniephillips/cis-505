@@ -4,6 +4,7 @@
     Purpose: Student object for storing user input and file results
 */
 public class Student {
+  private String id = "";
   private String firstName = "";
   private String lastName = "";
   private String course = "";
@@ -12,11 +13,20 @@ public class Student {
   public Student() {
   }
 
-  public Student(String firstName, String lastName, String course, String grade) {
+  public Student(String firstName, String lastName, String course, String grade, String id) {
+    this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.course = course;
     this.grade = grade;
+  }
+
+  public String getId() {
+    return this.id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getFirstName() {
